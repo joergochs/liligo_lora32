@@ -1,10 +1,16 @@
+Quellen:
 
+Registrierung bei TTN
 https://www.aeq-web.com/esp32-arduino-otta-registration-the-things-stack/
 
+Beispielprogramm
 https://www.aeq-web.com/ttgo-lilygo-esp32-gps-tracker-lorawan-setup/
 
+Applicationserver Beispiel
 https://www.aeq-web.com/lorawan-gps-tracker-the-things-stack-tts-application-server/
 
+Payload Dekoder
 https://www.aeq-web.com/so-funktioniert-die-lora-payload-encoder-decoder-ttn/
 
+GUI Tagoio
 https://www.aeq-web.com/tagoio-lorawan-integration-ttn/

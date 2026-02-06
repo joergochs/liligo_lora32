@@ -5,3 +5,4 @@ https://www.aeq-web.com/ttgo-lilygo-esp32-gps-tracker-lorawan-setup/
 
 https://www.aeq-web.com/lorawan-gps-tracker-the-things-stack-tts-application-server/
 
+https://www.aeq-web.com/so-funktioniert-die-lora-payload-encoder-decoder-ttn/

@@ -9,9 +9,9 @@
 #include <SPI.h>
 #include "secrets.h"
 
-uint8_t tx_payload[11] = {0x01, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-
+uint8_t tx_payload[4] = {0x00, 0x00, 0x00, 0x00}; 
 boolean join_success = false;
+static osjob_t sendjob;
 
 static const u1_t PROGMEM APPEUI[8] = AppEUI;
 void os_getArtEui (u1_t* buf) {
@@ -28,23 +28,69 @@ void os_getDevKey (u1_t* buf) {
   memcpy_P(buf, APPKEY, 16);
 }
 
-static osjob_t sendjob;
+// Schedule TX every this many seconds (might become longer due to dutycycle limitations).
+const unsigned TX_INTERVAL = 30;
 
-// Prototypes for functions that are not inlined in this sketch
-void do_send(osjob_t* j); 
-void printHex2(unsigned v);
-
-// Schedule TX every this many seconds (might become longer due to duty
-// cycle limitations).
-const unsigned TX_INTERVAL = 60;
-
-//LoRa pin mapping ESP32 (LILYGO Board V1.1)
+//LoRa pin mapping ESP32 (LILYGO Board T3 V1.6.1.)
 const lmic_pinmap lmic_pins = {
   .nss = 18,
   .rxtx = LMIC_UNUSED_PIN,
   .rst = 23,
   .dio = {26, 33, 32},
 };
+
+// Prototypes for functions that are not inlined in this sketch
+void do_send(osjob_t* j); 
+void printHex2(unsigned v);
+void onEvent (ev_t ev);
+void payload_modify(void);
+
+//-------------------------------------------------------------------------------------------------
+// Setup and loop functions are required for Arduino framework
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Starting");
+
+  SPI.begin(5, 19, 27, 18);
+
+  // LMIC init
+  os_init();
+  // Reset the MAC state. Session and pending data transfers will be discarded.
+  LMIC_reset();
+
+  // Start job (sending automatically starts OTAA too)
+  do_send(&sendjob);
+
+  //Set FS for RX2 (SF9 = TTN,TTS EU)
+  LMIC.dn2Dr = DR_SF9;
+
+}
+
+//---------------------------------------------------------------------------------
+// Hauptschleife, hier wird die Funktion os_runloop_once() aufgerufen, die die LoRaWAN-Events verarbeitet.
+
+void loop() {
+  os_runloop_once();
+
+ if (join_success == true) {
+  }
+  
+}
+
+//-------------------------------------------------------------------------------------------------
+// Funktion zum Ändern des Payloads, hier wird einfach der Wert jedes Bytes um 1 erhöht
+// Diese Funktion könnte erweitert werden, um z.B. Sensorwerte zu lesen und in den Payload einzufügen
+
+void payload_modify() {
+  // Update payload to be sent here
+  tx_payload[0] = tx_payload[0] + 1;
+  tx_payload[1] = tx_payload[1] + 1;
+  tx_payload[2] = tx_payload[2] + 1;
+  tx_payload[3] = tx_payload[3] + 1;
+} 
+
+//-------------------------------------------------------------------------------------------------
+// Basisfunktioen für LoRaWAN, nicht verändert
 
 void printHex2(unsigned v) {
   v &= 0xff;
@@ -194,32 +240,8 @@ void do_send(osjob_t* j) {
 
     LMIC_setTxData2(1, tx_payload, sizeof(tx_payload), 0);
     Serial.println(F("Packet queued"));
+
+    payload_modify(); // Update payload for next transmission - nur Testfunktion
   }
   // Next TX is scheduled after TX_COMPLETE event.
-}
-
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Starting");
-
- SPI.begin(5, 19, 27, 18);
-
-  // LMIC init
-  os_init();
-  // Reset the MAC state. Session and pending data transfers will be discarded.
-  LMIC_reset();
-
-  // Start job (sending automatically starts OTAA too)
-  do_send(&sendjob);
-
-  //Set FS for RX2 (SF9 = TTN,TTS EU)
-  LMIC.dn2Dr = DR_SF9;
-
-}
-
-void loop() {
-  os_runloop_once();
-
-  if (join_success == true) {
-  }
 }

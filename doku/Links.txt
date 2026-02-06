@@ -1,0 +1,7 @@
+
+https://www.aeq-web.com/esp32-arduino-otta-registration-the-things-stack/
+
+https://www.aeq-web.com/ttgo-lilygo-esp32-gps-tracker-lorawan-setup/
+
+https://www.aeq-web.com/lorawan-gps-tracker-the-things-stack-tts-application-server/
+

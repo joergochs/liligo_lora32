@@ -1,0 +1,8 @@
+Wichtige Konfigurationen:
+AppEUI: kann selbst vergeben werden =
+AppEUI: LSB-Format & HEX-Format in main.cpp
+DevEUI: LSB-Format & HEX-Format in main.cpp
+AppKey:direkt kopieren MSP-Format
+
+In lmic_project_config.h #define CFG_eu868 1 aktivieren
+Datei findet sich unter .pio/libdeps/lilygo-t-display/MCCI LoRaWAN LMIC library/project_config/lmic_project_config.h
